@@ -48,4 +48,41 @@ async def removePronouns(ctx, arg1):
         await ctx.send("You do not have the {} role!".format(arg1))
     pass
 
+@bot.command(name = "react")
+async def reactionRole(ctx, arg1):
+    message = await ctx.send('React to this message with a thumbs up to recieve the {} role!'.format(arg1))
+
+    thumb_up = '👍'
+    thumb_down = '👎'
+
+    await message.add_reaction(thumb_up)
+    await message.add_reaction(thumb_down)
+
+    def check(reaction, user):
+        return user == ctx.author and str(
+            reaction.emoji) in [thumb_up, thumb_down]
+
+    member = ctx.author
+
+    while True:
+        try:
+            reaction, user = await client.wait_for("on_reaction_add", timeout=10.0, check=check)
+            if str(reaction.emoji) == thumb_up:
+                await ctx.send('You have been given the member role!')
+
+            if str(reaction.emoji) == thumb_down:
+                await ctx.send('The member role has been removed.')
+        except:
+            return
+    pass
+
+@bot.command(name = 'reactionrole')
+async def reactionRole(ctx, arg1, arg2):
+    # First arg is role name
+    # Second arg is a message ID
+    message = await ctx.fetch_message(arg2)
+    role = discord.utils.get(ctx.guild.roles, name=arg1)
+    await message.add_reaction('\N{THUMBS UP SIGN}')
+    pass
+
 bot.run(os.getenv("DISCORD_TOKEN"))
