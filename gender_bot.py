@@ -4,9 +4,13 @@ from dotenv import load_dotenv
 from discord.ext import commands
 from discord.utils import get
 
+
 load_dotenv()
 
-bot = commands.Bot(command_prefix='!')
+intents = discord.Intents.default()
+intents.members = True
+
+bot = commands.Bot(command_prefix='!', intents = intents)
 
 @bot.event
 async def on_ready():
@@ -15,8 +19,9 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    role = discord.utils.get(member.server.roles, id="NonMember")
-    await bot.add_roles(member, role)
+    await member.send("Welcome to TrueColors!")
+    role = discord.utils.get(member.guild.roles, name = 'NonMember')
+    await member.add_roles(role)
 
 @bot.command(name = 'hello')
 async def hello(ctx):
