@@ -11,7 +11,12 @@ bot = commands.Bot(command_prefix='!')
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
-    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+    print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
+@bot.event
+async def on_member_join(member):
+    role = discord.utils.get(member.server.roles, id="NonMember")
+    await bot.add_roles(member, role)
 
 @bot.command(name = 'hello')
 async def hello(ctx):
