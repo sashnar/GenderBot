@@ -1,3 +1,4 @@
+import praw
 import discord
 import os
 from dotenv import load_dotenv
@@ -104,5 +105,16 @@ async def reactionRole(ctx, arg1):
     role = discord.utils.get(ctx.guild.roles, name=arg1)
     await message.add_reaction('\N{SMILE}')
     pass
+
+@bot.command(name = 'reddit')
+async def reddit(ctx):
+    reddit = praw.Reddit(client_id=os.getenv("CLIENT_ID"),
+                        client_secret=os.getenv("CLIENT_SECRET"),
+                        password = os.getenv("PASSWORD"),
+                        user_agent='902272060926075000 by mycolobee',
+                        username = os.getenv("USERNAME") )
+    for submission in reddit.subreddit("trans").hot(limit=10):
+        ctx.send(submission.title)
+
 
 bot.run(os.getenv("DISCORD_TOKEN"))
