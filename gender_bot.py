@@ -10,7 +10,12 @@ load_dotenv()
 intents = discord.Intents.default()
 intents.members = True
 
-bot = commands.Bot(command_prefix='!', intents = intents)
+help_command = commands.DefaultHelpCommand(
+    no_category = 'Commands'
+)
+
+bot = commands.Bot(command_prefix='!', intents = intents, help_command = help_command)
+
 
 @bot.event
 async def on_ready():
@@ -23,17 +28,20 @@ async def on_member_join(member):
     role = discord.utils.get(member.guild.roles, name = 'NonMember')
     await member.add_roles(role)
 
-@bot.command(name = 'hello')
+@bot.command(name = 'hello',category = "General",
+ help = "A command that greets the user.", brief = "Sends \"What\'s up??\".")
 async def hello(ctx):
     await ctx.send("What's up??")
     pass
 
-@bot.command(name = 'whatdo')
+@bot.command(name = 'whatdo',  help = "States general purpose of bot.", brief = "Sends a long message.")
 async def help(ctx):
-    await ctx.send("Here's the list of commands!")
+    await ctx.send("You can set roles and manage new members with this bot!")
     pass
 
-@bot.command(name = 'setpronouns')
+@bot.command(name = 'setpronouns',  
+help = "Allows a user to set their pronoun role. Takes one message as an argument. Example: !pronouns they/them/theirs",
+ brief = "Allows users to set pronouns role.")
 async def setPronouns(ctx, arg1):
     guild = ctx.guild
     user = ctx.message.author
@@ -46,7 +54,9 @@ async def setPronouns(ctx, arg1):
     await ctx.send("You have been given the role {}!".format(arg1))
     pass
 
-@bot.command(name = 'removepronouns')
+@bot.command(name = 'removepronouns',
+ help = "Allows user to remove a pronoun role. Example: !removepronouns they/them/theirs",
+  brief = "Allows user to remove pronouns role")
 async def removePronouns(ctx, arg1):
     guild = ctx.guild
     user = ctx.message.author
@@ -58,7 +68,8 @@ async def removePronouns(ctx, arg1):
         await ctx.send("You do not have the {} role!".format(arg1))
     pass
 
-@bot.command(name = "react")
+@bot.command(name = "react",  help = "Command bot to create a message that will assign users a role based on reactions. Example: !react Member",
+ brief = "Create a message with role reactions.")
 async def reactionRole(ctx, arg1):
     message = await ctx.send('React to this message with a thumbs up to recieve the {} role!'.format(arg1))
 
@@ -86,13 +97,12 @@ async def reactionRole(ctx, arg1):
             return
     pass
 
-@bot.command(name = 'reactionrole')
-async def reactionRole(ctx, arg1, arg2):
-    # First arg is role name
-    # Second arg is a message ID
+@bot.command(name = 'reactionrole',  help = "Reacts to the message with the given ID.", 
+brief = "Smiles at your message.")
+async def reactionRole(ctx, arg1):
     message = await ctx.fetch_message(arg2)
     role = discord.utils.get(ctx.guild.roles, name=arg1)
-    await message.add_reaction('\N{THUMBS UP SIGN}')
+    await message.add_reaction('\N{SMILE}')
     pass
 
 bot.run(os.getenv("DISCORD_TOKEN"))
